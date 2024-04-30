@@ -41,4 +41,4 @@ But you can train any OpenAI/CLIP model with this (just remember to tweak batch_
 - Please note: The U-Net of SDXL was also trained on the same dataset, with a frozen CLIP (independent of CLIP).
 - For fine-tuning the SDXL U-Net Diffusion Model to complement CLIP, please refer to [kohya-ss/sd-scripts](https://github.com/kohya-ss/sd-scripts)
 
-  ![github-finetune-longclip](https://github.com/zer0int/CLIP-fine-tune/assets/132047210/0f1d7a21-9c58-43fa-bdc9-fd6ccd56a869)
+![why-you-should](https://github.com/zer0int/CLIP-fine-tune/assets/132047210/6f099007-127a-4fa4-88bc-7622df5383d7)
