@@ -1,3 +1,10 @@
+### Changes 01/May/24:
+- Added misc conversion scripts for dataset labels as examples.
+- Added YOLO dataset AI auto pre-processing example scripts.
+- Download YOLOv7 weights: [https://github.com/WongKinYiu/yolov7/releases/download/v0.1/yolov7.weights](https://github.com/WongKinYiu/yolov7/releases/download/v0.1/yolov7.weights)
+- Download YOLOv4 weights: [https://github.com/AlexeyAB/darknet/releases/download/darknet_yolo_v3_optimal/yolov4.weights](https://github.com/AlexeyAB/darknet/releases/download/darknet_yolo_v3_optimal/yolov4.weights)
+------
+
 # Fine-tuning code for CLIP! 🤩
 
 - Originally made for Long-CLIP, see [zer0int/Long-CLIP](https://github.com/zer0int/Long-CLIP) for fine-tuning Long-CLIP
