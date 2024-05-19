@@ -1,3 +1,9 @@
+### Changes 019/May/24:
+- Added CLIP-PCA-compare-org-to-finetuned-model.py - compare PCA plots of original model vs. fine-tuned model:
+
+![pca-plot-example](https://github.com/zer0int/CLIP-fine-tune/assets/132047210/0936eed9-c62e-46ea-b72e-14936bb89558)
+
+------
 ### Changes 01/May/24:
 - Added misc conversion scripts for dataset labels as examples.
 - Added YOLO dataset AI auto pre-processing example scripts.
