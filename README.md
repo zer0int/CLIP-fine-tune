@@ -3,6 +3,10 @@
 
 ![pca-plot-example](https://github.com/zer0int/CLIP-fine-tune/assets/132047210/0936eed9-c62e-46ea-b72e-14936bb89558)
 
+Example for catastrophic overfitting: embeddings collapse and "everything is similar to everything" (cosine similarity). Decrease learning rate, increase batch size, make a better dataset with multiple text labels to choose from, when you see something like this:
+
+![embeddings-collapse](https://github.com/zer0int/CLIP-fine-tune/assets/132047210/7d31fe23-a1cc-471f-92e2-0f7d03281cc0)
+
 ------
 ### Changes 01/May/24:
 - Added misc conversion scripts for dataset labels as examples.
