@@ -1,3 +1,89 @@
+### Changes 26/May/24:
+- Added exp-ft-**.py
+
+### ⚠️ Extremely experimental Geometric Parameterization (GmP) inspired by [this paper](https://arxiv.org/abs/2305.15912v4).
+
+- Introduces sophisticated per-parameter learning needed for GmP fine-tune.
+- Introduces gradient accumulation. Check "finetune" code for details.
+- Otherwise, this mainly changes the model architecture (!) via custom CLIP model code.
+---
+- Change "import gmpclip as clip" to "import clip" in "exp-ft-B-GmP-finetune-OpenAI-ViT-L-14.py" to use for "normal" fine-tune.
+- 👇 If you do, you can skip this section & scroll down for the original fine-tuning instructions!
+---
+- Otherwise, you can also mostly fine-tune as usual; check code comments for pecularities.
+- ⚠️ It is normal / inevitable to get large or even 'inf' gradients in Epoch 0. But 'inf' should NOT happen in later epochs!
+- Optional: Use "exp-ft-X-visualize-theta-r-barplots.py" to visualize distribution of 'theta' and 'r' components (only works with GmP fine-tuned model).
+- Use "exp-ft-C-convert-GmP-back-to-weight.py" to convert fine-tune to normal model object. Otherwise, the model won't be compatible with any third party code at all!
+- Once converted back to ".weight", you can use the full model object "as normal" and e.g. convert to state_dict with "ft-C-convert-for-SDXL-comfyUI-OpenAI-CLIP.py".
+
+## What's Geometric Parameterization / GmP, theta, r? 🤔
+
+- GmP replaces linear layer ".weight" with GeometricLinear() for c_fc and c_proj in the MLP (multi-layer perceptron):
+
+```
+"Normal" CLIP MLP (multi-layer perceptron):
+
+(mlp): Sequential(
+  |-(c_fc): Linear(in_features=1024, out_features=4096, bias=True)
+  | (gelu): QuickGELU()
+|-}-(c_proj): Linear(in_features=4096, out_features=1024, bias=True)
+| | 
+| |-- visual.transformer.resblocks.0.mlp.c_fc.weight
+| |-- visual.transformer.resblocks.0.mlp.c_fc.bias
+|
+|---- visual.transformer.resblocks.0.mlp.c_proj.weight
+|---- visual.transformer.resblocks.0.mlp.c_proj.bias
+
+
+GmP CLIP MLP:
+
+Weight decomposition into:
+- radial component 'r' as norm of pre-trained weights
+- angular component 'theta' as normalized direction
+-> preserves weight vectors' directionality and magnitude
+
+(mlp): Sequential(
+  |-(c_fc): GeometricLinear()
+  | (gelu): QuickGELU()
+|-}-(c_proj): GeometricLinear()
+| | 
+| |-- visual.transformer.resblocks.0.mlp.c_fc.r
+| |-- visual.transformer.resblocks.0.mlp.c_fc.theta
+| |-- visual.transformer.resblocks.0.mlp.c_fc.bias
+|
+|---- visual.transformer.resblocks.0.mlp.c_proj.r
+|---- visual.transformer.resblocks.0.mlp.c_proj.theta
+|---- visual.transformer.resblocks.0.mlp.c_proj.bias
+
+(Same thing for [text] transformer.resblocks)
+```
+
+## Huh?!
+
+- In [the paper](https://arxiv.org/abs/2305.15912v4), the authors describe, quote:
+- *"In addition to achieving the best performance, GmP+IMN also converges significantly faster than other compared methods: its top-5 validation accuracy converges within 25 epochs, which is 10 epochs earlier than the second best method BN."*
+- *"All [related] techniques operate in the Cartesian coordinate and thus suffers from the instability issue, whereas GmP operates in the hyperspherical coordinate to overcome this [mentioned in paper] instability issue."*
+---
+- The authors mention machine vision models; however, only with regard to ReLU activation functions. 
+- However, CLIP's GELU is, in essence, a "kind of a smoother version of ReLU that allows negative values".
+- Why not just try it with the multimodal contrastive learner, CLIP? 💡🤓
+- I just let GPT-4o summarize the paper, then let the AI help me implement it for CLIP (thanks, GPT-4o!).
+- Alas: No solid hypothesis, reasoned in LaTeX, behind my AI & I's doings. But tinkering with CLIP and the results are what grounds this in reality:
+
+![clip-gmp-losses](https://github.com/zer0int/CLIP-fine-tune/assets/132047210/349f994d-1416-4288-b6c4-a6cdeb848772)
+
+---
+- Most remarkably, it seems to have curbed CLIP's "text obsession" / [typographic attack vulnerability](https://openai.com/index/multimodal-neurons/), at least to some part:
+
+
+![GmP-CLIP-fine-tune-fixes-typographic-attack-vulnerability](https://github.com/zer0int/CLIP-fine-tune/assets/132047210/c51ba459-2749-4f82-a9f5-22393c41f058)
+
+---
+- ⚠️ Disclaimer: I cannot "benchmark" this around and perform ablation studies and train on gigantic datasets and whatnot to really "scientifically prove" these results.
+- I don't know why this seems to lead to such surprisingly positive results, or if it always applies to any CLIP and any dataset.
+- I have 1 GPU, and I am doing this in my free time, alas provided "as-is", including the speculative "freak accident" remediation of CLIP's typographic attack vulnerability. Enjoy! 🙃
+
+------
 ### Changes 019/May/24:
 - Added CLIP-PCA-compare-org-to-finetuned-model.py - compare PCA plots of original model vs. fine-tuned model:
 
