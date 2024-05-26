@@ -1,6 +1,6 @@
 import torch
 import torch.nn.functional as F
-from gmpclip.modeloriginal import CLIP  # Make sure this imports the original CLIP class definition
+from orgclip.modeloriginal import CLIP  # Make sure this imports the original CLIP class definition
 
 def convert_back_to_original(state_dict):
     new_state_dict = {}
