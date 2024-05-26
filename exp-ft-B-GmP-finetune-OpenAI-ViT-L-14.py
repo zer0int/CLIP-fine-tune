@@ -230,14 +230,14 @@ max_learning_rate = 5e-7 # for scheduler.
 batch_size = 40 # if you used to fine-tune normal ViT-L/14 with batch size 48, then 40 may be a good start. GmP needs slightly more VRAM.
 
 # Define your training dataset(s) and dataloader
-dataset1 = ImageTextDataset("F:/AI_DATASET/SPRITE-spatial-labels/COCO/data-square", "F:/AI_DATASET/SPRITE-spatial-labels/COCO/data-square/short-coco-sprite-train-0_9.json", transform=preprocess)
+dataset1 = ImageTextDataset("COCO/data-square", "COCO/data-square/short-coco-sprite-train-0_9.json", transform=preprocess)
 #dataset2 = ImageTextDataset("path/to/images", "path/to/labels.json", transform=preprocess)
 
 concatenated_dataset = ConcatDataset([dataset1])  # Add more datasets to this list as needed ([dataset1, dataset2]) 
 train_dataloader = DataLoader(concatenated_dataset, batch_size=batch_size, shuffle=True)
 
 # Validation dataset and dataloader
-val_dataset = ImageTextDataset("F:/AI_DATASET/SPRITE-spatial-labels/COCO/data-square", "F:/AI_DATASET/SPRITE-spatial-labels/COCO/data-square/short-coco-sprite-val-10_11.json", transform=preprocess)
+val_dataset = ImageTextDataset("COCO/data-square", "COCO/data-square/short-coco-sprite-val-10_11.json", transform=preprocess)
 val_dataloader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
 
 total_steps = len(train_dataloader) * EPOCHS
