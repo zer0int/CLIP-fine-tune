@@ -77,7 +77,10 @@ Weight decomposition into:
 
 
 ![GmP-CLIP-fine-tune-fixes-typographic-attack-vulnerability](https://github.com/zer0int/CLIP-fine-tune/assets/132047210/c51ba459-2749-4f82-a9f5-22393c41f058)
-
+---
+![poodleadv-MOSAIC-forgit](https://github.com/zer0int/CLIP-fine-tune/assets/132047210/b03fb6bc-6950-404a-aa9e-b6786be12929)
+---
+![More-Examples](https://github.com/zer0int/CLIP-fine-tune/assets/132047210/df4ed8be-7894-4ceb-a4d7-d49b8e239fc5)
 ---
 - ⚠️ Disclaimer: I cannot "benchmark" this around and perform ablation studies and train on gigantic datasets and whatnot to really "scientifically prove" these results.
 - I don't know why this seems to lead to such surprisingly positive results, or if it always applies to any CLIP and any dataset.
