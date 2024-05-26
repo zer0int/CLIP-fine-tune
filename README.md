@@ -87,7 +87,7 @@ Weight decomposition into:
 - I have 1 GPU, and I am doing this in my free time, alas provided "as-is", including the speculative "freak accident" remediation of CLIP's typographic attack vulnerability. Enjoy! 🙃
 
 ------
-### Changes 019/May/24:
+### Changes 19/May/24:
 - Added CLIP-PCA-compare-org-to-finetuned-model.py - compare PCA plots of original model vs. fine-tuned model:
 
 ![pca-plot-example](https://github.com/zer0int/CLIP-fine-tune/assets/132047210/0936eed9-c62e-46ea-b72e-14936bb89558)
