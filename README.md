@@ -1,6 +1,9 @@
 ### Changes 26/May/24:
 - Added exp-ft-**.py
 
+![eval-imagenet-objectnet](https://github.com/zer0int/CLIP-fine-tune/assets/132047210/c733e331-5b0a-4166-b009-76e1fa5311a2)
+
+
 ### ⚠️ Extremely experimental Geometric Parameterization (GmP) inspired by [this paper](https://arxiv.org/abs/2305.15912v4).
 
 - Introduces sophisticated per-parameter learning needed for GmP fine-tune.
