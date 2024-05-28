@@ -1,3 +1,8 @@
+### Changes 28/May/24:
+
+- Added ft-D-eval*.py / validate accuracy of fine-tune against original CLIP model
+- Check code for details; use ImageNet/ObjectNet to replicate GmP-CLIP results
+----
 ### Changes 26/May/24:
 - Added exp-ft-**.py
 
