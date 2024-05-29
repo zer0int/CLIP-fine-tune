@@ -1,3 +1,12 @@
+## ⭐ Summary: 
+This repo is for fine-tuning CLIP in the command line. It does not add custom nodes to ComfyUI; however, you can easily use your fine-tune with ComfyUI:
+- First, fine-tune with ft-B-train-OpenAI-CLIP-ViT-L-14.py
+- Or, try the experimental and potentially superior exp-ft-B-GmP-finetune-OpenAI-ViT-L-14.py
+- If you used "exp-ft-B-GmP", use this to convert the model: exp-ft-C-convert-GmP-back-to-weight.py
+- Then, for both fine-tune scripts, use ft-C-convert-for-SDXL-comfyUI-OpenAI-CLIP.py
+- Now you have a state_dict you can plug into ComfyUI for use with SD / SDXL!
+### 👇 Scroll all the way down for step-by-step instructions with ComfyUI! 👇
+----
 ### Changes 28/May/24:
 
 - Added ft-D-eval*.py / validate accuracy of fine-tune against original CLIP model
