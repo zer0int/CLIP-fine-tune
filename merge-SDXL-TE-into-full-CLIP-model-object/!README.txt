@@ -15,3 +15,19 @@ Freeze the Text encoder, and try fine-tuning with the visual.transformer requiri
 This is highly experimental, and I wouldn't bet on the outcome being positive, i.e. that this works to "re-align" the vision transformer and projection space to whatever the TE has been fine-tuned to in SDXL with U-Net, e.g. using kohya.
 
 However: Happy experimenting!
+
+
+To load the model for fine-tuning:
+
+clipmodel = 'ViT-L/14'
+device = "cuda:0" if torch.cuda.is_available() else "cpu"
+_, preprocess = clip.load(clipmodel, device=device)
+model = torch.load("path/to/.cache/clip/combined-ViT-L-14-full-model-object.pt")
+model = model.cuda()
+
+For example, with my GmP fine-tuning code, "normal" LR of ~1e-7:
+
+{'params': transformer_parameters, 'lr': 1e-10},#Text Transformer params
+
+There are just some initial suggestions with regard to orders of magnitude that *MAY* work (probably better than completely freezing, according to GPT-4o).
+For a rough orientation only. It depends on how excessively you trained the TE with U-Net, and on what kind of dataset.
