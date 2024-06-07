@@ -7,6 +7,15 @@ This repo is for fine-tuning CLIP in the command line. It does not add custom no
 - Now you have a state_dict you can plug into ComfyUI for use with SD / SDXL!
 ### 👇 Scroll all the way down for step-by-step instructions with ComfyUI! 👇
 ----
+### Changes 07/June/24:
+Added scripts to puzzle together a full CLIP text-vision transformer from the SDXL text encoder .safetensors file as per [this issue](https://github.com/zer0int/CLIP-fine-tune/issues/3).
+See the readme in "merge-SDXL-TE-into-full-CLIP-model-object" for details. You can use this (full model object .pt) with all of my scripts as usual, but beware that if you fine-tuned the TE in SDXL (e.g. kohya), it will be unaligned / misaligned with the vision transformer and alas, latent space.
+
+In other words, the model will be completely bonkers (see below), but you can try fine-tuning it "back into alignment" (freeze TE, fine-tune with careful LR). Good luck!
+
+![model-crazy](https://github.com/zer0int/CLIP-fine-tune/assets/132047210/f5a66c6e-5cee-4033-ad98-3f63185dbfbc)
+
+----
 ### Changes 28/May/24:
 
 - Added ft-D-eval*.py / validate accuracy of fine-tune against original CLIP model
