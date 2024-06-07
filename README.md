@@ -7,6 +7,23 @@ This repo is for fine-tuning CLIP in the command line. It does not add custom no
 - Now you have a state_dict you can plug into ComfyUI for use with SD / SDXL!
 ### 👇 Scroll all the way down for step-by-step instructions with ComfyUI! 👇
 ----
+### Update 07/June/24:
+Preliminary results of GmP-CLIP for SDXL-TE repair fine-tune: 
+1. Seemingly "bad" results; model not able to predict correct words / opinion for an image (see previous update below)
+2. However, it seems to "re-align coherence" -> very much improved results when used as SDXL TE encoder!
+3. Separate CLIP fine-tune still superior, but:
+4. This is potentially useful for ⚠️ fixing a ruined TE finetuned with U-Net (e.g. kohya) ⚠️ in <1h / 5 Epochs.
+
+Results:
+![Untitled-2](https://github.com/zer0int/CLIP-fine-tune/assets/132047210/d851358b-8596-4d8e-8fb4-6f4aeaa3acc1)
+The above model, used as SDXL TE again (center samples):
+![Untitled-1](https://github.com/zer0int/CLIP-fine-tune/assets/132047210/c37ed7ce-276f-49b9-86f7-a9297f77c0eb)
+
+- 1st row: Ruined TE, once fine-tuned with U-Net (kohya) -> I normally don’t use this TE, but use a separately fine-tuned TE for this U-Net (3rd row).
+- Take TE -> reassemble to full CLIP model with original Vision Transformer (see folder for scripts!) -> GmP (!) fine-tune on CoCo-SPRIGHT-40k short-labels for 5 Epochs (see COCO folder for json!) -> "Really bad fine-tune", judging by the numbers -> convert back to weight -> convert to state_dict -> Try it with SDXL *ANYWAY* -> results in 2nd row.
+- ✅ Worth a try for a quick fix -> Ruined TE in SDXL by previous fine-tune.
+- Note: All generated with same seed / settings / U-Net, of course. All of these use PAG, see [here](https://stable-diffusion-art.com/perturbed-attention-guidance/).
+----
 ### Changes 07/June/24:
 Added scripts to puzzle together a full CLIP text-vision transformer from the SDXL text encoder .safetensors file as per [this issue](https://github.com/zer0int/CLIP-fine-tune/issues/3).
 See the readme in "merge-SDXL-TE-into-full-CLIP-model-object" for details. You can use this (full model object .pt) with all of my scripts as usual, but beware that if you fine-tuned the TE in SDXL (e.g. kohya), it will be unaligned / misaligned with the vision transformer and alas, latent space.
@@ -14,7 +31,6 @@ See the readme in "merge-SDXL-TE-into-full-CLIP-model-object" for details. You c
 In other words, the model will be completely bonkers (see below), but you can try fine-tuning it "back into alignment" (freeze TE, fine-tune with careful LR). Good luck!
 
 ![model-crazy](https://github.com/zer0int/CLIP-fine-tune/assets/132047210/f5a66c6e-5cee-4033-ad98-3f63185dbfbc)
-
 ----
 ### Changes 28/May/24:
 
