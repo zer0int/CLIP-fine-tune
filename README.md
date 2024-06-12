@@ -7,6 +7,16 @@ This repo is for fine-tuning CLIP in the command line. It does not add custom no
 - Now you have a state_dict you can plug into ComfyUI for use with SD / SDXL!
 ### 👇 Scroll all the way down for step-by-step instructions with ComfyUI! 👇
 ----
+### Update 12/June/24:
+- Added exp-acts-ft-finetune-OpenAI-CLIP-ViT-L-14-GmP-manipulate-neurons.py
+- Allows to manipulate / scale activation values at c_fc individual neurons
+- See [zer0int/Golden-Gate-CLIP](https://github.com/zer0int/Golden-Gate-CLIP) for details
+
+Background: I identified an "adverb neuron" in the vision transformer of ViT-L/14. When the activation value is scaled by a factor of 1000, CLIP's "opinion" about any image will be mainly consisting of adverbs (see link above for code & details). I scaled the activaton value of predominantly this penultimate layer neuron by x1000 during fine-tuning on the usual general dataset (CoCo-40k-SPRIGHT), expecting either overfit / "adverb CLIP" or destruction of the model. Initially, training seemed to converge toward the latter, with Validation Accuracy and Validation F1 being in the 0.0X range while gradients truly exploded (reached inf) even after Epoch 0, and given a LR=1e-7. As the scheduler kicked in to increase the learning rate up to 5e-7, a dramatic drop in loss and val loss was observed, with an immediate jump to Validation Acc 0.8, Val F1 0.75, further improving with every additional Epoch. The final model has an unprecedented ImageNet / ObjectNet accuracy of ~0.90 (original pre-trained model / OpenAI's CLIP: ~0.85). Apparently, the model compensated for those erratic, over-activated neurons, and in turn found a better solution / minimum for generalizing text-image contrastive learning. It unexpectedly turned out to be my best-performing fine-tune thus far. Alas I am sharing the code to reproduce the results (or modify other neuron activations experimentally) as-is.
+
+![results-act-github](https://github.com/zer0int/CLIP-fine-tune/assets/132047210/1a65c639-60c1-4d42-bd2f-98a38ec19ea5)
+
+----
 ### Update 07/June/24:
 Preliminary results of GmP-CLIP for SDXL-TE repair fine-tune: 
 1. Seemingly "bad" results; model not able to predict correct words / opinion for an image (see previous update below)
