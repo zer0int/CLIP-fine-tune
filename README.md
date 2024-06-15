@@ -7,7 +7,8 @@ This repo is for fine-tuning CLIP in the command line. It does not add custom no
 - Now you have a state_dict you can plug into ComfyUI for use with SD / SDXL!
 ### 👇 Scroll all the way down for step-by-step instructions with ComfyUI! 👇
 
-⬇️ Download my best-performing fine-tune (see Update 12/June/24) here: [https://huggingface.co/zer0int/CLIP-GmP-ViT-L-14](https://huggingface.co/zer0int/CLIP-GmP-ViT-L-14) ⬇️
+⬇️ Download my best-performing fine-tune (see Update 12/June/24) here: 
+- ⬇️ [https://huggingface.co/zer0int/CLIP-GmP-ViT-L-14](https://huggingface.co/zer0int/CLIP-GmP-ViT-L-14)
 - It's a state-dict; use with ComfyUI as-is, or load it as the state_dict of the original ViT-L/14 for inference, to fine-tune, etc.
 ----
 ### Update 12/June/24:
