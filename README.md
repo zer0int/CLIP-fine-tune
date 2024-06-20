@@ -10,6 +10,9 @@ This repo is for fine-tuning CLIP in the command line. It does not add custom no
 ⬇️ Download my best-performing fine-tune (see Update 12/June/24) here: 
 - ⬇️ [https://huggingface.co/zer0int/CLIP-GmP-ViT-L-14](https://huggingface.co/zer0int/CLIP-GmP-ViT-L-14)
 - It's a state-dict; use with ComfyUI as-is, or load it as the state_dict of the original ViT-L/14 for inference, to fine-tune, etc.
+
+![eval-clip-gpt4-compare](https://github.com/zer0int/CLIP-fine-tune/assets/132047210/358ef8b0-4a92-4405-b271-a80c5890539d)
+
 ----
 ### Update 12/June/24:
 - Added exp-acts-ft-finetune-OpenAI-CLIP-ViT-L-14-GmP-manipulate-neurons.py
