@@ -6,6 +6,7 @@ This repo is for fine-tuning CLIP in the command line. It does not add custom no
 - Then, for both fine-tune scripts, use ft-C-convert-for-SDXL-comfyUI-OpenAI-CLIP.py
 - Now you have a state_dict you can plug into ComfyUI for use with SD / SDXL!
 ### 👇 Scroll all the way down for step-by-step instructions with ComfyUI! 👇
+### ‼️ Don't want to fine-tune? You can download the model here: [https://huggingface.co/zer0int](https://huggingface.co/zer0int)
 -------
 ## Changes 11/AUG/2024:
 
