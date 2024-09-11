@@ -10,6 +10,7 @@ from tqdm import tqdm
 import os
 import random
 from torch.utils.data import Dataset
+import torch.nn.functional as F
 
 class ImageTextDataset(Dataset):
     def __init__(self, image_folder, annotations_file, transform=None):
@@ -81,9 +82,14 @@ def evaluate_model(model, data_loader):
         with torch.no_grad():
             image_embeddings = model.encode_image(batch_images)
             text_embeddings = model.encode_text(batch_texts)
-            logits_per_image = (image_embeddings @ text_embeddings.T).softmax(dim=-1)
 
-            # Get the top predictions
+            # Normalize embeddings to calculate cosine similarity
+            image_embeddings = F.normalize(image_embeddings, p=2, dim=1)
+            text_embeddings = F.normalize(text_embeddings, p=2, dim=1)
+
+            # Compute cosine similarity with temperature scaling
+            logits_per_image = torch.matmul(image_embeddings, text_embeddings.T) / model.logit_scale.exp()
+
             _, top_indices = logits_per_image.topk(1, dim=-1)
 
             for i, label in enumerate(batch_labels):
