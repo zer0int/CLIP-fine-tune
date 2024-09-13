@@ -88,7 +88,7 @@ def evaluate_model(model, data_loader):
             text_embeddings = F.normalize(text_embeddings, p=2, dim=1)
 
             # Compute cosine similarity with temperature scaling
-            logits_per_image = torch.matmul(image_embeddings, text_embeddings.T) / model.logit_scale.exp()
+            logits_per_image = torch.matmul(image_embeddings, text_embeddings.T) * model.logit_scale.exp()
 
             _, top_indices = logits_per_image.topk(1, dim=-1)
 
