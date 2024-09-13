@@ -1,12 +1,9 @@
 import os
 import json
 import torch
-from torch.utils.data import Dataset, DataLoader
-from torchvision.io import read_image
 from PIL import Image
 from torch import nn, optim
 from torch.utils.data import Dataset, DataLoader, ConcatDataset
-from torch.optim.lr_scheduler import ReduceLROnPlateau
 import torch.nn.functional as F
 from sklearn.metrics import f1_score, accuracy_score
 # Uncomment to use lightning-thunder
@@ -15,7 +12,6 @@ import warnings
 warnings.filterwarnings("ignore")
 import matplotlib.pyplot as plt
 import clip
-from torch.optim import AdamW
 from torch.optim.lr_scheduler import OneCycleLR
 import random
 from colorama import Fore, Style
@@ -188,27 +184,17 @@ class ImageTextDataset(Dataset):
         
         
 class ContrastiveLoss(nn.Module):
-    def __init__(self, temperature=0.07):
+    def __init__(self):
         super(ContrastiveLoss, self).__init__()
-        self.temperature = temperature
         self.criterion = nn.CrossEntropyLoss()
 
     def forward(self, logits_per_image, logits_per_text):
-        # Normalize the features to avoid overflow or underflow
-        logits_per_image = F.normalize(logits_per_image, p=2, dim=1)
-        logits_per_text = F.normalize(logits_per_text, p=2, dim=1)
-
-        # Calculate logits
-        logits = torch.matmul(logits_per_image, logits_per_text.t()) / self.temperature
-        labels = torch.arange(logits.size(0), device=logits.device)
-
-        # Calculate loss as the mean of the two cross-entropy losses
-        loss_img = self.criterion(logits, labels)
-        loss_txt = self.criterion(logits.t(), labels)
-
+        labels = torch.arange(logits_per_image.size(0), device=logits_per_image.device)
+        loss_img = self.criterion(logits_per_image, labels)
+        loss_txt = self.criterion(logits_per_text, labels)
         return (loss_img + loss_txt) / 2
 
-contrastive_loss = ContrastiveLoss(temperature=0.07)
+
 from torch.cuda.amp import autocast, GradScaler
 scaler = GradScaler()
 
@@ -256,7 +242,7 @@ train_dataloader = DataLoader(concatenated_dataset, batch_size=batch_size, shuff
 
 # Validation dataset and dataloader - use images from the training dataset that are NOT in the above training data! Recommended: 10-20% of full dataset.
 val_dataset = ImageTextDataset("path/to/validation/image/folder", "path/to/my-validation-text-labels.json", transform=preprocess)
-val_dataloader = DataLoader(val_dataset, batch_size=batch_size, shuffle=True)
+val_dataloader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
 
 total_steps = len(train_dataloader) * EPOCHS
 
@@ -269,11 +255,12 @@ transformer_parameters = [p for p in model.transformer.parameters() if p.require
 param_groups = [
     {'params': visual_parameters[:len(transformer_parameters)//2], 'lr': 1e-6},  # First half of the transformer
     {'params': visual_parameters[len(transformer_parameters)//2:], 'lr': 3e-6},   # Second half of the transformer
-    {'params': transformer_parameters[:len(transformer_parameters)//2], 'lr': 1e-6},  # First half of the transformer
-    {'params': transformer_parameters[len(transformer_parameters)//2:], 'lr': 3e-6},   # Second half of the transformer
+    {'params': transformer_parameters[:len(visual_parameters)//2], 'lr': 1e-6},  # First half of the vision transformer
+    {'params': transformer_parameters[len(visual_parameters)//2:], 'lr': 3e-6},   # Second half of the vision transformer
 ]
 
 # Default optimizer AdamW (not recommended). Set to "AdamW(param_groups, ...)" to use above differential learning rates 
+# from torch.optim import AdamW
 # optimizer = AdamW(model.parameters(), lr=learning_rate, betas=(0.9, 0.995), eps=1e-6, weight_decay=1e-2)
 
 from adabelief_pytorch import AdaBelief
@@ -309,7 +296,7 @@ print("== START == \n")
 
 
 def trainloop():
-    contrastive_loss = ContrastiveLoss(temperature=0.07).to(device)
+    contrastive_loss = ContrastiveLoss().to(device)
     logits_images = []
     logits_texts = []
     
