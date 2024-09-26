@@ -253,10 +253,10 @@ transformer_parameters = [p for p in model.transformer.parameters() if p.require
 
 # Potentially useful if you get gigantic gradient norms at the delicate layers near the input
 param_groups = [
-    {'params': visual_parameters[:len(transformer_parameters)//2], 'lr': 1e-6},  # First half of the transformer
-    {'params': visual_parameters[len(transformer_parameters)//2:], 'lr': 3e-6},   # Second half of the transformer
-    {'params': transformer_parameters[:len(visual_parameters)//2], 'lr': 1e-6},  # First half of the vision transformer
-    {'params': transformer_parameters[len(visual_parameters)//2:], 'lr': 3e-6},   # Second half of the vision transformer
+    {'params': transformer_parameters[:len(transformer_parameters)//2], 'lr': 1e-6},  # First half of the transformer
+    {'params': transformer_parameters[len(transformer_parameters)//2:], 'lr': 3e-6},   # Second half of the transformer
+    {'params': visual_parameters[:len(visual_parameters)//2], 'lr': 1e-6},  # First half of the vision transformer
+    {'params': visual_parameters[len(visual_parameters)//2:], 'lr': 3e-6},   # Second half of the vision transformer
 ]
 
 # Default optimizer AdamW (not recommended). Set to "AdamW(param_groups, ...)" to use above differential learning rates 
