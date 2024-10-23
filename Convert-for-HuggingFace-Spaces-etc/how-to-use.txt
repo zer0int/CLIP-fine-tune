@@ -1,0 +1,12 @@
+IMPORTANT! First, convert CLIP back from Geometric Parametrization (.theta and .r) into having a standard .weight matrix, or the conversion will NOT work!
+
+Use this script first: exp-ft-C-convert-GmP-back-to-weight.py
+
+Then, put the resulting converted-back-to-weight .pt file into this folder and run:
+
+convert_clip_original_pytorch_to_hf.py --checkpoint_path "my-finetune.pt" --pytorch_dump_folder_path "converted_model" --config_path "ViT-L-14-HF-config.json"
+
+
+-- OPTIONAL --
+
+Afterwards, IF you get an error mentioning something about 'pt', use this script: optional-metadata-to-safetensors.py
