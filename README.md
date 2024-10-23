@@ -8,6 +8,14 @@ This repo is for fine-tuning CLIP in the command line. It does not add custom no
 ### 👇 Scroll all the way down for step-by-step instructions with ComfyUI! 👇
 ### ‼️ Don't want to fine-tune? You can download the model here: [https://huggingface.co/zer0int](https://huggingface.co/zer0int)
 -------
+## Changes 23/OKT/2024:
+Added folder `Convert-for-HuggingFace-Spaces-etc`
+
+- Includes the [convert_clip_original_pytorch_to_hf.py](https://github.com/huggingface/transformers/blob/main/src/transformers/models/clip/convert_clip_original_pytorch_to_hf.py) script from HuggingFace + configuration .json files.
+- Includes optional code to subsequently extract the Text Encoder only model (e.g. for Flux.1 guidance)
+- Includes optional code to add metadata `{"format": "pt"}` - use it in case you get an error about 'pt'!
+- Please check the included `how-to-use.txt` & code comments for details
+----
 ## Changes 22/OKT/2024:
 Added `a-loss-to-penalize-overfit-via-entropy.py`
 
