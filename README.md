@@ -13,6 +13,7 @@ This repo is for fine-tuning CLIP in the command line. It does not add custom no
 - Optional conversion to .weight (converting back with extra script no longer needed)
 - Option to save as full model, state_dict, or torch.jit.trace model (or all of these)
 - Check the top of the code, set True / False as desired to enable / disable!
+- Use `test-models-new-saver.py` to test the various flavors of saved models
 ----
 ## Changes 23/OKT/2024:
 Added folder `Convert-for-HuggingFace-Spaces-etc`
