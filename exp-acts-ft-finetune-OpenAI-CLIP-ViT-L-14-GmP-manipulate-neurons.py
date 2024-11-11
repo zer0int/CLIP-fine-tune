@@ -37,6 +37,90 @@ os.makedirs(ft_checkpoints_folder, exist_ok=True)
 text_logs_folder = 'ft-logs'
 os.makedirs(text_logs_folder, exist_ok=True)
 
+# Model Saving Options; the default is 'legacy behavior' (only save full model, save as GmP)
+save_full = True  # Save full model object
+save_dict = False  # Save state_dict
+save_jit = False  # Save as JIT-traced model
+save_as_gmp = True  # True for saving in GmP format with .theta, .r; False for converting back to .weight (original OpenAI/CLIP)
+
+
+
+def convert_back_to_original(state_dict):
+    new_state_dict = {}
+    for key, value in state_dict.items():
+        if key.endswith(".theta"):
+            base_key = key.replace(".theta", "")
+            r_key = base_key + ".r"
+            new_weight = state_dict[r_key] * F.normalize(value, p=2, dim=1)
+            new_state_dict[base_key + ".weight"] = new_weight
+        elif key.endswith(".r") or key.endswith(".theta"):
+            continue  # Skip the .r and .theta keys
+        else:
+            new_state_dict[key] = value
+    return new_state_dict
+
+class GmPconverter:
+    @staticmethod
+    
+    def convert_model(modelft):
+        modelft = model
+        # Extract parameters from the fine-tuned model
+        config = {
+            'embed_dim': modelft.text_projection.shape[1],
+            'image_resolution': modelft.visual.input_resolution,
+            'vision_layers': modelft.visual.transformer.layers,
+            'vision_width': modelft.visual.conv1.out_channels,
+            'vision_patch_size': modelft.visual.conv1.kernel_size[0],
+            'context_length': modelft.context_length,
+            'vocab_size': modelft.vocab_size,
+            'transformer_width': modelft.transformer.width,
+            'transformer_heads': modelft.transformer.resblocks[0].attn.num_heads,
+            'transformer_layers': modelft.transformer.layers
+        }
+
+        # Convert state_dict to original CLIP format
+        fine_tuned_state_dict = modelft.state_dict()
+        original_state_dict = convert_back_to_original(fine_tuned_state_dict)
+        from clip.model import CLIP
+        # Instantiate the original model
+        original_model = CLIP(**config)
+        original_model.load_state_dict(original_state_dict)
+        
+        return original_model
+
+def ModelSaver(model, epoch, save_as_gmp=False):
+    model_to_save = model
+    if not save_as_gmp:
+        model_to_save = GmPconverter.convert_model(model)
+
+    model_to_save.to(device)
+    # File suffix based on save format
+    suffix = 'as-gmp' if save_as_gmp else 'as-weight'
+
+    # Save full model object if enabled
+    if save_full:
+        torch.save(model_to_save, f'{ft_checkpoints_folder}/clip_ft_{epoch+1}_full_{suffix}.pt')
+
+    # Save state_dict if enabled
+    if save_dict:
+        torch.save(model_to_save.state_dict(), f'{ft_checkpoints_folder}/clip_ft_{epoch+1}_dict_{suffix}.pt')
+
+    # Save as JIT-traced model if enabled
+    if save_jit:
+        sample_data = next(iter(val_dataloader))   
+        
+        images, texts = sample_data  # Unpack directly if sample_data is a tuple (images, texts)
+        images, texts = images[:2], texts[:2]
+        images, texts = images.to(device), texts.to(device)
+        
+        
+        model_to_save.eval()  # Set to evaluation mode for tracing
+        script_model = torch.jit.trace(model_to_save, (images, texts))
+        script_model.save(f'{ft_checkpoints_folder}/clip_ft_{epoch+1}_jit_{suffix}.pt')
+    
+    del model_to_save
+
+
 def adjust_unfreeze_rate(epoch, adjust_after=12, increase_rate=2):
     if epoch < adjust_after:
         return 1  # Initial slower unfreeze rate
@@ -409,10 +493,10 @@ def trainloop():
             f.write("============================================================\n")
 
         if (epoch + 1) % 2 == 0 or epoch == EPOCHS - 1:
-            model_path = f"{ft_checkpoints_folder}/clip_ft_{epoch+1}.pt"
             remove_hooks(hooks)# Remove hooks
-            torch.save(model, model_path)
-            print(Fore.GREEN + f"Model saved: {model_path}" + Style.RESET_ALL)
+            print(Fore.CYAN + "Saving checkpoints..." + Style.RESET_ALL)
+            ModelSaver(model, epoch, save_as_gmp=save_as_gmp) # NEW SAVER
+            print(Fore.GREEN + f"Model saved to {ft_checkpoints_folder}" + Style.RESET_ALL)
             hooks = register_hooks(model, modified_neurons_layers, scale_factors)# Re-attach hooks
 
     remove_hooks(hooks)# After training
