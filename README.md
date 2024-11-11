@@ -8,6 +8,12 @@ This repo is for fine-tuning CLIP in the command line. It does not add custom no
 ### 👇 Scroll all the way down for step-by-step instructions with ComfyUI! 👇
 ### ‼️ Don't want to fine-tune? You can download the model here: [https://huggingface.co/zer0int](https://huggingface.co/zer0int)
 -------
+## Changes 11/NOV/2024:
+- Added a new model saver: Saves either as GmP + full model object (default, legacy behavior)
+- Optional conversion to .weight (converting back with extra script no longer needed)
+- Option to save as full model, state_dict, or torch.jit.trace model (or all of these)
+- Check the top of the code, set True / False as desired to enable / disable!
+----
 ## Changes 23/OKT/2024:
 Added folder `Convert-for-HuggingFace-Spaces-etc`
 
