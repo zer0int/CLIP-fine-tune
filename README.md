@@ -8,6 +8,17 @@ This repo is for fine-tuning CLIP in the command line. It does not add custom no
 ### 👇 Scroll all the way down for step-by-step instructions with ComfyUI! 👇
 ### ‼️ Don't want to fine-tune? You can download the model here: [https://huggingface.co/zer0int](https://huggingface.co/zer0int)
 -------
+## Changes 09-MAR-2025:
+⚠️ A new way to fine-tune CLIP: 🌟 [github.com/zer0int/CLIP-fine-tune-registers-gated](https://github.com/zer0int/CLIP-fine-tune-registers-gated) 🌟
+- But: Is it for you? 🤔
+- You want a Text Encoder for T2I / T2V / Gen-AI, or you want best zero-shot accuracy: No / not necessarily. ❌
+- You want a CLIP that is compatible with everything (no architecture change): No / stick with this repo. ❌
+- You are frustrated by the modality gap and want a retrieval CLIP? Absolutely yes! [CLICK ME](https://github.com/zer0int/CLIP-fine-tune-registers-gated) ✅
+- In a nutshell: New CLIP has +20M params, register tokens, Gated MLP / Fusion.
+- Modality Gap (OpenAI pre-trained): 0.8276 --> (NEW CLIP): 0.4740 👈🤯
+- Attention heatmaps are finally meaningful, not "burnt-in artifacts".
+- Check out the models on my HuggingFace: [huggingface.co/zer0int/CLIP-Registers-Gated_MLP-ViT-L-14](https://huggingface.co/zer0int/CLIP-Registers-Gated_MLP-ViT-L-14)
+-----
 ## Changes 11/NOV/2024:
 - Added a new model saver: Saves either as GmP + full model object (default, legacy behavior)
 - Optional conversion to .weight (converting back with extra script no longer needed)
