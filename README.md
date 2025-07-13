@@ -1,3 +1,46 @@
+### Major Update 13-JUL-2025 
+
+# CLIP-KO: Knocking Out Typographic Attacks in CLIP 💪🤖
+### Finally, a CLIP without a 'text obsession'! 🤗
+❤️ this CLIP? [Donate](https://ko-fi.com/zer0int) if you can / want. TY!
+
+- 📝 Read the [paper](https://github.com/zer0int/CLIP-fine-tune/blob/CLIP-vision/KO-CLIP-teaser/KO-CLIP-paper-final.pdf) (PDF) here.
+------
+- For use with THIS codebase, 'import clip' style:
+- Download the [CLIP-KO model](https://huggingface.co/zer0int/CLIP-KO-TypoAttack-Attn-Dropout-ViT-L-14/resolve/main/ViT-L-14-KO-FULL-model-OpenAI-format.safetensors?download=true) (put into `models` folder)
+- Download the [CLIP-KO-LITE model](https://huggingface.co/zer0int/CLIP-KO-LITE-TypoAttack-Attn-Dropout-ViT-L-14/resolve/main/ViT-L-14-KO-LITE-FULL-model-OpenAI-format.safetensors?download=true)
+------
+- For use with HuggingFace Transformers, check out:
+- [huggingface.co/zer0int/CLIP-KO-TypoAttack-Attn-Dropout-ViT-L-14/](https://huggingface.co/zer0int/CLIP-KO-TypoAttack-Attn-Dropout-ViT-L-14/)
+- [huggingface.co/zer0int/CLIP-KO-LITE-TypoAttack-Attn-Dropout-ViT-L-14](https://huggingface.co/zer0int/CLIP-KO-LITE-TypoAttack-Attn-Dropout-ViT-L-14)
+------
+### 🤓 To use (fine-tune and / or eval my claims from the paper):
+
+- Extract `image_sets/extract_this_here_imagenet.zip`
+- Download [Adversarial Training Dataset](https://huggingface.co/datasets/zer0int/CLIP-KO-Adversarial-Train-Typo-Attack)
+- Put the `typoattack` folder with the images into `ko_adversarial_dataset`
+- Download the [Training Dataset](https://huggingface.co/datasets/SPRIGHT-T2I/spright_coco) (see `COCO` folder for info)
+------
+- Follow the instructions in `ko-1-fine-tune-clip-ko-head-dropout.py`
+- When fine-tuning is complete, run `ko-2-convert-back-to-weight.py`
+- For a quick eval (typo-attack, zero-shot, linear probe), run `ko-3-quick-finetune-eval.py`
+------
+- Check the code comments / info inside any of the `ko-*` files for help!
+--------
+Excellent typographic attack resilience:
+<img width="1009" height="856" alt="scam-is-bliss" src="https://github.com/user-attachments/assets/315d5474-41cc-4058-a7d3-53e29d751eb3" />
+
+No more artifacts on attention heatmaps (top: KO-CLIP; bottom: pre-trained):
+
+https://github.com/user-attachments/assets/88528810-611f-49d0-9154-a73d91b92389
+
+<img width="1815" height="498" alt="attention-maps" src="https://github.com/user-attachments/assets/cdfd13f2-17b7-4058-b0e0-73eeb4d40be4" />
+
+<img width="1140" height="266" alt="atttnhead4" src="https://github.com/user-attachments/assets/f61887e4-4787-42c3-8ae1-351a3e6eb2fd" />
+
+------------------
+## ~~ Older releases below ~~~
+------------------
 ## ⭐ Summary: 
 This repo is for fine-tuning CLIP in the command line. It does not add custom nodes to ComfyUI; however, you can easily use your fine-tune with ComfyUI:
 - First, fine-tune with ft-B-train-OpenAI-CLIP-ViT-L-14.py
