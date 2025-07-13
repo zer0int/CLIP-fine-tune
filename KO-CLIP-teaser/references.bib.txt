@@ -1,0 +1,213 @@
+@inproceedings{chefer2021generic,
+  title={Generic Attention-model Explainability for Interpreting Bi-Modal and Encoder-Decoder Transformers},
+  author={Chefer, Hila and Gur, Shir and Wolf, Lior},
+  booktitle={ICLR},
+  year={2021},
+  url={https://arxiv.org/abs/2103.15679}
+}
+
+@article{chen2023relu,
+  title={ReLU Characteristic Activation Analysis},
+  author={Chen, Wenlin and Ge, Hong},
+  journal={arXiv preprint arXiv:2305.15912},
+  year={2023},
+  url={https://arxiv.org/abs/2305.15912v4}
+}
+
+@inproceedings{bhattacharyya2023decatt,
+  title={DeCAtt: Efficient Vision Transformers with Decorrelated Attention Heads},
+  author={Bhattacharyya, Mayukh and Chattopadhyay, Soumitri and Nag, Sayan},
+  booktitle={CVPR Workshops},
+  year={2023},
+  url={https://openaccess.thecvf.com/content/CVPR2023W/ECV/papers/Bhattacharyya_DeCAtt_Efficient_Vision_Transformers_With_Decorrelated_Attention_Heads_CVPRW_2023_paper.pdf}
+}
+
+@misc{chatterjee2024getting,
+      title={Getting it Right: Improving Spatial Consistency in Text-to-Image Models}, 
+      author={Agneet Chatterjee and Gabriela Ben Melech Stan and Estelle Aflalo and Sayak Paul and Dhruba Ghosh and Tejas Gokhale and Ludwig Schmidt and Hannaneh Hajishirzi and Vasudev Lal and Chitta Baral and Yezhou Yang},
+      year={2024},
+      eprint={2404.01197},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV}
+}
+
+@misc{zer0int2024clipgmp,
+      author = {zer0int},
+      title = {CLIP-GmP-ViT-L-14},
+      year = {2024},
+      howpublished = {\url{https://huggingface.co/zer0int/CLIP-GmP-ViT-L-14}}
+}
+
+@misc{zer0int2024clipsae,
+      author = {zer0int},
+      title = {CLIP-SAE-ViT-L-14},
+      year = {2024},
+      howpublished = {\url{https://huggingface.co/zer0int/CLIP-SAE-ViT-L-14}}
+}
+
+@misc{bflai2024flux1dev,
+  title={Flux.1-dev announcement},
+  author={BFL.ai},
+  note={\url{https://bfl.ai/announcements/24-08-01-bfl}},
+  year={2024}
+}
+
+@misc{westerhoff2025scamrealworldtypographicrobustness,
+  title={SCAM: A Real-World Typographic Robustness Evaluation for Multimodal Foundation Models},
+  author={Justus Westerhoff and Erblina Purelku and Jakob Hackstein and Jonas Loos and Leo Pinetzki and Lorenz Hufe},
+  year={2025},
+  eprint={2504.04893},
+  archivePrefix={arXiv},
+  primaryClass={cs.CV},
+  url={https://arxiv.org/abs/2504.04893}
+}
+
+@misc{laion2023clipbenchmark,
+  title={CLIP Benchmark},
+  author={LAION AI},
+  howpublished={\url{https://github.com/LAION-AI/CLIP_benchmark}},
+  year={2023}
+}
+
+@inproceedings{mayo2023howhard,
+  title={How hard are computer vision datasets? Calibrating dataset difficulty to viewing time},
+  author={David Mayo and Jesse Cummings and Xinyu Lin and Dan Gutfreund and Boris Katz and Andrei Barbu},
+  booktitle={Advances in Neural Information Processing Systems 36},
+  year={2023}
+}
+
+@misc{azuma2023defenseprefix,
+  title={Defense-Prefix for Preventing Typographic Attacks on CLIP},
+  author={Hiroki Azuma and Yusuke Matsui},
+  year={2023},
+  eprint={2304.04512},
+  archivePrefix={arXiv},
+  primaryClass={cs.CV},
+  url={https://arxiv.org/abs/2304.04512}
+}
+
+@article{gandelsman2024interpreting,
+  title={Interpreting the Second-Order Effects of Neurons in CLIP},
+  author={Yossi Gandelsman and Alexei A. Efros and Jacob Steinhardt},
+  journal={arXiv preprint arXiv:2406.04341},
+  year={2024},
+  url={https://arxiv.org/abs/2406.04341}
+}
+
+@article{park2023whatdovitslearn,
+  title={What Do Self-Supervised Vision Transformers Learn?},
+  author={Namuk Park and Wonjae Kim and Byeongho Heo and Taekyung Kim and Sangdoo Yun},
+  journal={arXiv preprint arXiv:2305.00729},
+  year={2023},
+  url={https://arxiv.org/abs/2305.00729}
+}
+
+@article{stolfo2024confidence,
+  title={Confidence Regulation Neurons in Language Models},
+  author={Alessandro Stolfo and Ben Wu and Wes Gurnee and Yonatan Belinkov and Xingyi Song and Mrinmaya Sachan and Neel Nanda},
+  journal={arXiv preprint arXiv:2406.16254},
+  year={2024},
+  url={https://arxiv.org/abs/2406.16254}
+}
+
+@article{darcet2024vision,
+  title={Vision Transformers Need Registers},
+  author={Timothée Darcet and Maxime Oquab and Julien Mairal and Piotr Bojanowski},
+  journal={arXiv preprint arXiv:2309.16588},
+  year={2024},
+  url={https://arxiv.org/abs/2309.16588}
+}
+
+@article{jiang2024vision,
+  title={Vision Transformers Don't Need Trained Registers},
+  author={Nick Jiang and Amil Dravid and Alexei Efros and Yossi Gandelsman},
+  journal={arXiv preprint arXiv:2506.08010},
+  year={2024},
+  url={https://arxiv.org/abs/2506.08010}
+}
+
+@article{goh2021multimodal,
+  author = {Goh, Gabriel and †, Nick Cammarata and †, Chelsea Voss and Carter, Shan and Petrov, Michael and Schubert, Ludwig and Radford, Alec and Olah, Chris},
+  title = {Multimodal Neurons in Artificial Neural Networks},
+  journal = {Distill},
+  year = {2021},
+  note = {https://distill.pub/2021/multimodal-neurons},
+  doi = {10.23915/distill.00030}
+}
+
+@misc{zer0int2024cliptesttimeregisters,
+  author = {zer0int},
+  title = {CLIP-test-time-registers},
+  year = {2024},
+  howpublished = {\url{https://github.com/zer0int/CLIP-test-time-registers}}
+}
+
+@article{chen2023relu,
+  title={ReLU Characteristic Activation Analysis},
+  author={Wenlin Chen and Hong Ge},
+  journal={arXiv preprint arXiv:2305.15912},
+  year={2023}
+}
+
+@article{manjunath2024gnss,
+  title={Multimodal-to-Text Prompt Engineering in Large Language Models Using Feature Embeddings for GNSS Interference Characterization},
+  author={Harshith Manjunath and Lucas Heublein and Tobias Feigl and Felix Ott},
+  journal={arXiv preprint arXiv:2501.05079},
+  year={2024},
+  url={https://arxiv.org/abs/2501.05079v1}
+
+}
+@misc{openai2021clipcard,
+  author = {OpenAI},
+  title = {CLIP Model Card},
+  year = {2021},
+  howpublished = {\url{https://github.com/openai/CLIP/blob/main/model-card.md}}
+}
+
+@misc{darcet2024visiontransformersneedregisters,
+      title={Vision Transformers Need Registers}, 
+      author={Timothée Darcet and Maxime Oquab and Julien Mairal and Piotr Bojanowski},
+      year={2024},
+      eprint={2309.16588},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV},
+      url={https://arxiv.org/abs/2309.16588}, 
+}
+
+@misc{jiang2025visiontransformersdontneed,
+      title={Vision Transformers Don't Need Trained Registers}, 
+      author={Nick Jiang and Amil Dravid and Alexei Efros and Yossi Gandelsman},
+      year={2025},
+      eprint={2506.08010},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV},
+      url={https://arxiv.org/abs/2506.08010}, 
+}
+
+@misc{radford2021learningtransferablevisualmodels,
+      title={Learning Transferable Visual Models From Natural Language Supervision}, 
+      author={Alec Radford and Jong Wook Kim and Chris Hallacy and Aditya Ramesh and Gabriel Goh and Sandhini Agarwal and Girish Sastry and Amanda Askell and Pamela Mishkin and Jack Clark and Gretchen Krueger and Ilya Sutskever},
+      year={2021},
+      eprint={2103.00020},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV},
+      url={https://arxiv.org/abs/2103.00020}, 
+}
+
+@article{goh2021multimodal,
+  author = {Gabriel Goh and Nick Cammarata and Chelsea Voss and Shan Carter and Michael Petrov and Ludwig Schubert and Alec Radford and Chris Olah},
+  title = {Multimodal Neurons in Artificial Neural Networks},
+  journal = {Distill},
+  year = {2021},
+  note = {https://distill.pub/2021/multimodal-neurons},
+  doi = {10.23915/distill.00030}
+}
+
+@InProceedings{Chefer_2021_ICCV,
+   author    = {Chefer, Hila and Gur, Shir and Wolf, Lior},
+   title     = {Generic Attention-Model Explainability for Interpreting Bi-Modal and Encoder-Decoder Transformers},
+   booktitle = {Proceedings of the IEEE/CVF International Conference on Computer Vision (ICCV)},
+   month     = {October},
+   year      = {2021},
+   pages     = {397-406}
+}
