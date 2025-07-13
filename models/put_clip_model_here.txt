@@ -1,0 +1,7 @@
+https://huggingface.co/zer0int/CLIP-KO-TypoAttack-Attn-Dropout-ViT-L-14/
+https://huggingface.co/zer0int/CLIP-KO-LITE-TypoAttack-Attn-Dropout-ViT-L-14
+
+Or directly download and put the model into this directory:
+
+https://huggingface.co/zer0int/CLIP-KO-TypoAttack-Attn-Dropout-ViT-L-14/resolve/main/ViT-L-14-KO-FULL-model-OpenAI-format.safetensors?download=true
+https://huggingface.co/zer0int/CLIP-KO-LITE-TypoAttack-Attn-Dropout-ViT-L-14/resolve/main/ViT-L-14-KO-LITE-FULL-model-OpenAI-format.safetensors?download=true
