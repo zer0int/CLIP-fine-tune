@@ -1,0 +1,22 @@
+adabelief_pytorch
+captum
+colorama
+ftfy
+kornia
+matplotlib
+numpy
+opencv_contrib_python
+opencv_contrib_python_headless
+opencv_python
+opencv_python_headless
+pandas
+Pillow
+regex
+safetensors
+scikit_learn
+scipy
+torchvision
+tqdm
+wcwidth
+git+https://github.com/openai/CLIP.git
+#torch - please download as suitable from https://pytorch.org/
