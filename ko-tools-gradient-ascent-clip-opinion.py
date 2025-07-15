@@ -159,7 +159,7 @@ def checkin(loss, tx, lll, tok, bests, imagename):
 
 # Softmax
 class Pars(torch.nn.Module):
-    def __init__(self, batch_size, many_tokens, prompt):
+    def __init__(self, batch_size, many_tokens, prompt, positional_shape=77):
         super(Pars, self).__init__()
         self.batch_size = batch_size
         self.many_tokens = many_tokens
@@ -176,7 +176,7 @@ class Pars(torch.nn.Module):
         for jk, pt in enumerate(prompt):
             self.prompt_embeddings[:, jk, pt] = 1 
 
-        pad_length = 77 - (self.many_tokens + len(self.prompt) + 1)
+        pad_length = positional_shape - (self.many_tokens + len(self.prompt) + 1)
         self.pad = torch.zeros(self.batch_size, pad_length, 49408).cuda()
         self.pad[:, :, 49407] = 1
 
@@ -299,6 +299,8 @@ def main():
 
     normalizer = Normalization([0.48145466, 0.4578275, 0.40821073], [0.26862954, 0.26130258, 0.27577711]).cuda()
     model = model.float()
+    
+    positional_shape = model.positional_embedding.shape[0]
 
     # -------------------- REGISTER NEURON ABLATION --------------------
     # You can set scale_factor to non-zero (e.g. 10) and see what happens!
@@ -334,7 +336,7 @@ def main():
     checkin_step = 10  
     iterations=300
     tokinit = 4
-    lats = Pars(args.batch_size, tokinit, prompt).cuda()
+    lats = Pars(args.batch_size, tokinit, prompt, positional_shape).cuda()
     
     optimizer = torch.optim.Adam([{'params': [lats.normu], 'lr': 5}])
 
