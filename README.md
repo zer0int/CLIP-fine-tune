@@ -26,6 +26,22 @@
 - For a quick eval (typo-attack, zero-shot, linear probe), run `ko-3-quick-finetune-eval.py`
 ------
 - Check the code comments / info inside any of the `ko-*` files for help!
+------
+## Update 16-JUL-2025
+### 🆕 Added Long-CLIP variant of CLIP-KO
+### 🆕 Conversion scripts dir: `KO-CLIP-convert-for-huggingface`
+
+- Info + get the original models: [github.com/beichenzbc/Long-CLIP](https://github.com/beichenzbc/Long-CLIP)
+- Get my fine-tune (put it in the `models` dir): [HuggingFace link](https://huggingface.co/zer0int/LongCLIP-KO-LITE-TypoAttack-Attn-ViT-L-14/resolve/main/Long-ViT-L-14-KO-LITE-FULL-OpenAI-format.safetensors?download=true)
+- Or check out all models on my HuggingFace: [huggingface.co/zer0int](https://huggingface.co/zer0int)
+----
+NOTE: For Long-CLIP, I've provided the *most important* scripts. If you want to use *all* scripts, make the following simple changes:
+- Replace `import clip` with `import longclip as clip`
+- Replace `from clip.model import ...` with `from longclip.model import ...`
+- 💡 Always prepend `long`, for example: `import attnclip` -> `import longattnclip`
+- Remove any `if model_name_or_path.endswith(".safetensors") ... else ...`
+- 💡 To load, make it just: `model, preprocess = clip.load(model_name_or_path, device=device, jit=False)`
+- I am handling .safetensors, pickle / state_dict internally (in `import longclip` etc.)
 --------
 Excellent typographic attack resilience:
 <img width="1009" height="856" alt="scam-is-bliss" src="https://github.com/user-attachments/assets/315d5474-41cc-4058-a7d3-53e29d751eb3" />
