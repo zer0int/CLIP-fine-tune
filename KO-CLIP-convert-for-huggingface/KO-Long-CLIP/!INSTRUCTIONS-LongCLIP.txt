@@ -1,0 +1,14 @@
+1. Ensure you converted your fine-tune checkpoint using "ko-long-2-convert-back-to-weight.py"
+2. Put the converted file here; say, "clip_ft_20_backtoweight.pt"
+3. Run:
+
+python convert-1-merge-embeds.py --checkpoint_path clip_ft_20_backtoweight.pt
+
+4. Resulting file: clip_ready_for_hf.pt
+5. Run:
+
+python convert-2-to-hf-safetensors.py --checkpoint_path "clip_ready_for_hf.pt" --pytorch_dump_folder_path "converted_model" --config_path "config.json"
+
+6. To save a Text Encoder only version, run:
+
+python convert-3-get-text-encoder.py
