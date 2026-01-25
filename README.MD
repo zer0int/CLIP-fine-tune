@@ -81,3 +81,12 @@ Love ❤️ this CLIP?
 </details>
 
 -------
+
+Friendly config in `all_in_one_clip_fine_tune.py`:
+<img width="914" height="964" alt="friendly-config" src="docs_regression_clip/friendly-config.png" />
+
+Automatic dataset config of `as above`: Heuristics + ask user if multiple labels present:
+<img width="1409" height="948" alt="auto-dataset" src="docs_regression_clip/auto-dataset.png" />
+
+Geometry analysis suite `eval_measure_modality_gap_geometry.py`; heuristics will inform about issues (e.g. 'did embeddings collapse?'):
+<img width="987" height="853" alt="auto-dataset" src="docs_regression_clip/geometry-analysis.png" />
