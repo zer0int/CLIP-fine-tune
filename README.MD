@@ -67,7 +67,7 @@ The config .json are in `utils_xconfigs_examples` --- Training code: `all_in_one
 - All scripts have docstrings with info / instructions at the top
 
 ### More
-- View the old version (pre-2026) of CLIP-fine-tune here: [Previous version of CLIP-fine-tune](link to old)
+- View the old version (pre-2026) of CLIP-fine-tune here: [Previous version of CLIP-fine-tune](https://github.com/zer0int/CLIP-fine-tune/tree/CLIP-vision)
 
 ------
 
