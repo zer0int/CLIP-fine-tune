@@ -1,0 +1,14 @@
+a photo of a cat
+a photo of a dog
+text label 'cat'
+text label 'dog'
+a dog
+a cat
+black fur
+white fur
+the word on the cheek
+the word below the mouth
+the word atop the paw
+the word on the left ear
+the word on the right ear
+the word on the chest

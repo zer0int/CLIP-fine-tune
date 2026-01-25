@@ -1,0 +1,122 @@
+=================== RTA 100 TYPOGRAPHIC ATTACK ================
+
+Measurement		Pre-Trained	KO-CLIP		KO-LITE
+
+Zero-Shot Acc		0.4330		0.7210		0.6260
+
+================ BLISS / SCAM TYPOGRAPIC ATTACK ===============
+
+Zero-shot Acc		Pre-Trained	KO-CLIP		KO-LITE
+
+NoSCAM: 	 	0.9905		0.9897		0.9897
+SCAM:			0.4165		0.7823		0.7367
+SynthSCAM:		0.3219		0.7358		0.6790
+
+
+=================== IMAGENET / LINEAR PROBE =================== 
+
+ILSVRC2012 Linear Probe:
+
+Measurement	Pre-Trained	KO-CLIP		KO-LITE
+
+Top-1:		69.86%		70.58%		72.65%
+Top-5:		92.70%		93.79%		94.08%
+
+---------------
+
+MVT ImageNet/ObjectNet (zero-shot):
+
+Measurement	Pre-trained	KO-CLIP		KO-LITE
+
+Accuracy	0.846		0.898		0.9029
+
+---------------
+
+ImageNet 1k, zero-shot (LAION/CLIP_Benchmark):
+
+Measure			Pre-Trained	KO-CLIP		KO-LITE
+
+acc1: 			0.32696		0.43440		0.46882
+acc5: 			0.52997		0.65297		0.68845
+mean_per_class_recall: 	0.32609		0.43252		0.46695
+
+
+===================== VoC-2007-multilabel =====================
+
+VoC-2007-multilabel (zero-shot) (LAION/CLIP_Benchmark):
+
+Measure			Pre-Trained	KO-CLIP		KO-LITE
+
+mAP: 			0.7615		0.8579		0.8626
+
+
+
+==================== Zero-Shot Retrieval ====================
+
+Zeroshot Retrieval on mscoco_captions (LAION/CLIP_Benchmark)
+
+Measure				Pre-Trained	KO-CLIP		KO-LITE
+
+image_retrieval_recall@5: 	0.2196 		0.3296		0.3385
+text_retrieval_recall@5: 	0.3032		0.4396		0.4745
+
+
+
+============== Zero-Shot Retrieval, crossmodal ==============
+
+Zeroshot Retrieval on xm3600 (crossmodal3600, LAION, CLIP_Benchmark):
+
+English				Pre-Trained	KO-CLIP		KO-LITE
+
+image_retrieval_recall@5: 	0.30593		0.43338		0.43700
+text_retrieval_recall@5: 	0.24293		0.38884		0.42324
+
+
+
+======================= Sugar_Crepe =======================
+
+sugar_crepe, LAION/CLIP_Benchmark, Pre-Trained:
+
+Add 	ATT: image_acc: 1.0 text_acc: 0.77745, acc: 0.77745
+Add 	OBJ: image_acc: 1.0 text_acc: 0.80358, acc: 0.80358
+Replace ATT: image_acc: 1.0 text_acc: 0.76903, acc: 0.76903
+Replace OBJ: image_acc: 1.0 text_acc: 0.87832, acc: 0.87832
+Replace REL: image_acc: 1.0 text_acc: 0.71550, acc: 0.71550
+Swap 	ATT: image_acc: 1.0 text_acc: 0.58558, acc: 0.58558
+Swap 	OBJ: image_acc: 1.0 text_acc: 0.57959, acc: 0.57959
+
+
+sugar_crepe, LAION/CLIP_Benchmark, KO-CLIP:
+
+Add 	ATT: image_acc: 1.0 text_acc: 0.84537, acc: 0.84537
+Add 	OBJ: image_acc: 1.0 text_acc: 0.84093, acc: 0.84093
+Replace ATT: image_acc: 1.0 text_acc: 0.81091, acc: 0.81091
+Replace OBJ: image_acc: 1.0 text_acc: 0.90617, acc: 0.90617
+Replace REL: image_acc: 1.0 text_acc: 0.73470, acc: 0.73470
+Swap 	ATT: image_acc: 1.0 text_acc: 0.62912, acc: 0.62912
+Swap 	OBJ: image_acc: 1.0 text_acc: 0.60816, acc: 0.60816
+
+
+sugar_crepe, LAION/CLIP_Benchmark, KO-LITE:
+
+Add 	ATT: image_acc: 1.0 text_acc: 0.87427, acc: 0.87427
+Add 	OBJ: image_acc: 1.0 text_acc: 0.84772, acc: 0.84772
+Replace ATT: image_acc: 1.0 text_acc: 0.82106, acc: 0.82106
+Replace OBJ: image_acc: 1.0 text_acc: 0.91162, acc: 0.91162
+Replace REL: image_acc: 1.0 text_acc: 0.74253, acc: 0.74253
+Swap 	ATT: image_acc: 1.0 text_acc: 0.63363, acc: 0.63363
+Swap 	OBJ: image_acc: 1.0 text_acc: 0.62040, acc: 0.62040
+
+
+
+============= FLICKR-8K CROSS-MODAL MEASUREMENTS ============= 
+
+Cross-modal measurement		Pre-Trained	KO-CLIP		KO-LITE
+
+Euclidean Gap ↓			0.8276		0.8657		0.8182
+JSD ↓				0.5200		0.2863		0.1455
+Wasserstein Distance ↓		0.4084		0.4166		0.3889
+Img-Text Cos Sim (mean) ↑	0.2723		0.3077		0.3300
+Img-Text Cos Sim (std)		0.0362		0.0645		0.0690
+Text-Text Cos Sim (mean)	0.6807		0.7243		0.7189
+Text-Text Cos Sim (std)		0.1344		0.1377		0.1387

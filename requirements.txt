@@ -1,0 +1,40 @@
+# Core numerics
+numpy
+scipy
+pandas
+matplotlib
+
+# Vision / image IO
+Pillow
+opencv-python
+
+# ML
+scikit-learn
+tqdm
+
+# PyTorch (install manually with the right CUDA wheel)
+# torch 	https://pytorch.org/get-started/locally/
+# torchvision	^^ same
+
+# HF ecosystem
+transformers
+datasets
+huggingface_hub
+safetensors
+
+# Text utils / tokenization quirks
+ftfy
+regex
+
+# Aug/vision ops
+kornia
+
+# Optimizers
+adabelief-pytorch
+
+# Misc
+requests
+colorama
+
+# OpenAI CLIP (install from git)
+git+https://github.com/openai/CLIP.git

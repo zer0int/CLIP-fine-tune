@@ -1,0 +1,12 @@
+the word 'blue'
+a blue word
+the word 'red'
+a crimson word
+a red word
+the word 'green'
+a green word
+a yellow word
+a cyan word
+a magenta word
+a black word
+a white word
