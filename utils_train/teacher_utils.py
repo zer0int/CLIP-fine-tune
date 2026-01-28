@@ -296,6 +296,31 @@ def build_global_embeddings_from_tokens(
     return out
 
 
+def _infer_visual_num_layers(model) -> int:
+    """
+    Infer number of visual transformer blocks from the loaded CLIP-like model.
+
+    Tries common structures:
+      - model.visual.transformer.resblocks   (OpenAI CLIP ViT)
+      - model.visual.resblocks               (some forks)
+    """
+    visual = getattr(model, "visual", None)
+    if visual is None:
+        raise ValueError("Cannot infer visual depth: model has no .visual")
+
+    # OpenAI CLIP-style ViT
+    tr = getattr(visual, "transformer", None)
+    if tr is not None and hasattr(tr, "resblocks"):
+        return len(tr.resblocks)
+
+    # Some forks expose resblocks directly
+    if hasattr(visual, "resblocks"):
+        return len(visual.resblocks)
+
+    raise ValueError(
+        "Cannot infer visual depth: expected model.visual.transformer.resblocks or model.visual.resblocks"
+    )
+
 
 def encode_image_tokens_after_block(
     visual: nn.Module,
@@ -303,6 +328,15 @@ def encode_image_tokens_after_block(
     block_idx: int,
     detach: bool,
 ) -> torch.Tensor:
+
+    # MODIFIED: strict bounds check (prevents silent last-block fallback)
+    n_blocks = len(visual.transformer.resblocks)
+    if not (0 <= int(block_idx) < n_blocks):
+        raise ValueError(
+            f"encode_image_tokens_after_block: block_idx={block_idx} out of range "
+            f"(n_blocks={n_blocks}; valid=[0..{n_blocks-1}])."
+        )
+
     x = x.to(dtype=visual.conv1.weight.dtype)
 
     x = visual.conv1(x)
@@ -320,57 +354,18 @@ def encode_image_tokens_after_block(
     x = visual.ln_pre(x)
     x = x.permute(1, 0, 2)  # [seq, B, d]
 
-    # ============================================================
-    # Attention Uber Alles!
-    # Terrible idea, with catastropic but interesting results.
-    # Best leave this set to False. :)
-    # ============================================================
-    use_attn_weighted = False  # <-- set False to skip attn weights entirely
+    use_attn_weighted = False
 
     for i, block in enumerate(visual.transformer.resblocks):
-
-        if use_attn_weighted and (i == block_idx):
-            # reproduce block forward, but also compute CLS-query attention weights
-            x_ln1 = block.ln_1(x)
-
-            attn_mask = block.attn_mask
-            if attn_mask is not None:
-                attn_mask = attn_mask.to(dtype=x_ln1.dtype, device=x_ln1.device)
-
-            # normal attention output (no weights)
-            attn_out = block.attn(x_ln1, x_ln1, x_ln1, need_weights=False, attn_mask=attn_mask)[0]
-
-            # CLS-only query for weights (cheap, no LxL materialization)
-            # query: [1, B, d], key/value: [seq, B, d]
-            # weights: [B, n_heads, 1, seq] when average_attn_weights=False
-            _out_cls, w = block.attn(
-                x_ln1[:1],
-                x_ln1,
-                x_ln1,
-                need_weights=True,
-                average_attn_weights=False,
-                attn_mask=attn_mask,
-            )
-            cls_attn_w = w.squeeze(2)  # [B, n_heads, seq]
-
-            x = x + attn_out
-            x = x + block.mlp(block.ln_2(x))
-
-            t_post = x.permute(1, 0, 2)  # [B, seq, d]
-            if detach:
-                return t_post.detach(), cls_attn_w.detach()
-            return t_post, cls_attn_w
-
-        # normal forward
+        # (unchanged body...)
         x = block(x)
-
         if i == block_idx:
             t_post = x.permute(1, 0, 2)  # [B, seq, d]
             return t_post.detach() if detach else t_post
 
+    # Should be unreachable due to bounds check.
     t_post = x.permute(1, 0, 2)
     return t_post.detach() if detach else t_post
-
 
 
 def compute_cls_patch_embeddings(
@@ -951,12 +946,12 @@ def evaluate_teacher_cosine(
     return float(torch.cat(cos_list, dim=0).mean().item())
 
 
-
-def resolve_regression_teacher_specs(cfg: TrainConfig) -> Dict[int, Dict[str, Any]]:
+def resolve_regression_teacher_specs(cfg: TrainConfig, model) -> Dict[int, Dict[str, Any]]:
     """
     Strict behavior:
       - if cfg.use_regression_teachers is False: return {}
-      - if True: validate cfg.regression_teachers and return normalized specs
+      - if True: validate cfg.regression_teachers against the *actual model depth*
+        inferred from len(model.visual.transformer.resblocks) (or compatible fallback).
 
     reg_threshold semantics:
       - numeric (int/float) OR numeric string with no ':' => absolute
@@ -968,6 +963,10 @@ def resolve_regression_teacher_specs(cfg: TrainConfig) -> Dict[int, Dict[str, An
     raw = dict(getattr(cfg, "regression_teachers", {}) or {})
     if len(raw) == 0:
         raise SystemExit("[Abort] cfg.use_regression_teachers=True but cfg.regression_teachers is empty.")
+
+    # MODIFIED: infer depth from model
+    n_layers = _infer_visual_num_layers(model)
+    max_layer = n_layers - 1
 
     specs: Dict[int, Dict[str, Any]] = {}
     for k, v in raw.items():
@@ -981,10 +980,12 @@ def resolve_regression_teacher_specs(cfg: TrainConfig) -> Dict[int, Dict[str, An
 
     norm: Dict[int, Dict[str, Any]] = {}
     for layer, spec in specs.items():
-        if not (0 <= int(layer) <= 23):
-            raise SystemExit(f"[Abort] regression teacher layer must be in [0..23], got {layer}.")
+        if not (0 <= int(layer) <= max_layer):
+            raise SystemExit(
+                f"[Abort] regression teacher layer must be in [0..{max_layer}] for this model, got {layer}. "
+                f"(model visual depth={n_layers})"
+            )
 
-        # validate reg_threshold using the canonical parser
         reg_threshold_raw = spec.get("reg_threshold", 70.0)
         try:
             _ = normalize_reg_threshold_spec(reg_threshold_raw)
@@ -1008,17 +1009,14 @@ def resolve_regression_teacher_specs(cfg: TrainConfig) -> Dict[int, Dict[str, An
                 raise SystemExit(f"[Abort] regression_teachers[{layer}].jl.num_proj must be > 0.")
             if int(jl["seed_stride"]) <= 0:
                 raise SystemExit(f"[Abort] regression_teachers[{layer}].jl.seed_stride must be > 0.")
-
         if not (0.0 <= cls_mix <= 1.0):
             raise SystemExit(f"[Abort] regression_teachers[{layer}].cls_mix must be in [0,1], got {cls_mix}.")
-
         if use_reg_whitening and (not is_reg_teacher):
             raise SystemExit(
                 f"[Abort] regression_teachers[{layer}].use_reg_whitening=True requires is_reg_teacher=True."
             )
 
         norm[int(layer)] = {
-            # keep as-is; may be float OR string
             "reg_threshold": reg_threshold_raw,
             "lam": lam,
             "cls_mix": cls_mix,
@@ -1029,9 +1027,6 @@ def resolve_regression_teacher_specs(cfg: TrainConfig) -> Dict[int, Dict[str, An
         }
 
     return {k: norm[k] for k in sorted(norm.keys())}
-
-
-
 
 
 def make_teacher_cache_paths(cfg: TrainConfig, teacher_specs: Dict[int, Dict[str, Any]]) -> Dict[int, str]:

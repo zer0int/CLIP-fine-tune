@@ -164,12 +164,37 @@ class BalancedImageFolderTeacher(Dataset):
         img, _ = self.base[idx]
         return img
 
+
 class CroppedImageCSVFileDataset(Dataset):
     """
     ImageNet/ObjectNet MVT for quick ZS and LP.
-    """    
+    """
     def __init__(self, df: pd.DataFrame, image_folder: str, transform=None):
-        self.data = df.reset_index(drop=True)
+
+        if isinstance(df, pd.DataFrame):
+            self.data = df.reset_index(drop=True)
+        else:
+            csv_file = df  # backwards-compat: may pass csv path
+
+            max_tries = 6
+            base_sleep_s = 0.02
+            last_err = None
+
+            for t in range(max_tries):
+                try:
+                    # Explicit handle scope so Windows/AV doesn't keep it locked
+                    with open(csv_file, "rb") as f:
+                        self.data = pd.read_csv(f).reset_index(drop=True)
+                    last_err = None
+                    break
+                except (PermissionError, OSError) as e:
+                    last_err = e
+                    import time
+                    time.sleep(base_sleep_s * (2 ** t) + 0.003 * (t + 1))
+
+            if last_err is not None:
+                raise last_err
+
         self.image_folder = image_folder
         self.transform = transform
 
@@ -177,13 +202,33 @@ class CroppedImageCSVFileDataset(Dataset):
         return len(self.data)
 
     def __getitem__(self, idx):
-        image_name = self.data.iloc[idx]['image']
+        image_name = self.data.iloc[idx]["image"]
         image_path = os.path.join(self.image_folder, image_name)
-        image = Image.open(image_path).convert('RGB')
+
+        max_tries = 6
+        base_sleep_s = 0.02
+        last_err = None
+
+        for t in range(max_tries):
+            try:
+                with Image.open(image_path) as im:
+                    image = im.convert("RGB").copy()
+                last_err = None
+                break
+            except (PermissionError, OSError) as e:
+                last_err = e
+                import time
+                time.sleep(base_sleep_s * (2 ** t) + 0.003 * (t + 1))
+
+        if last_err is not None:
+            raise last_err
+
         if self.transform:
             image = self.transform(image)
-        label_idx = int(self.data.iloc[idx]['label_idx'])
+
+        label_idx = int(self.data.iloc[idx]["label_idx"])
         return image, label_idx
+
 
 class TinyImageFolderDataset(Dataset):
     """

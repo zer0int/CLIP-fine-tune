@@ -526,6 +526,51 @@ def main(cfg: TrainConfig):
                 print(Fore.YELLOW + "[TeacherLog] no previous teacher log line found." + Style.RESET_ALL)
 
     # ------------------------
+    # Seeds
+    # ------------------------
+    dl_generator = torch.Generator()
+    dl_generator.manual_seed(int(cfg.teacher_seed))
+
+    torch.manual_seed(cfg.teacher_seed)
+    random.seed(cfg.teacher_seed)
+    try:
+        import numpy as np
+        np.random.seed(cfg.teacher_seed)
+    except Exception:
+        pass
+
+    # ------------------------------------------------
+    # CLIP module (KO-GmP or GmP), load CLIP model
+    # ------------------------------------------------
+    clip = import_clip_module(cfg.use_ko_config)
+    print(Fore.CYAN + f"[CLIP] module={'gmpclipheaddropout' if cfg.use_ko_config else 'gmpclipregression'}" + Style.RESET_ALL)
+
+    base_model, preprocess, _ = load_openai_clip_anything(clip, cfg.clipmodel, device=device, jit=False, strict=True)
+
+    if continue_run and loaded_bundle is not None:
+        model_from_pickle = try_load_model_from_resume(loaded_bundle, device=device)
+        if model_from_pickle is not None:
+            model = model_from_pickle
+            print(Fore.CYAN + "[Resume] Loaded full model pickle." + Style.RESET_ALL)
+        else:
+            model = base_model
+            sd_cpu = loaded_bundle.get("model_state_dict_cpu", None)
+            if sd_cpu is None:
+                raise SystemExit("[Abort] Resume bundle has neither loadable full model nor model_state_dict_cpu.")
+            missing, unexpected = model.load_state_dict(sd_cpu, strict=False)
+            print(Fore.CYAN + f"[Resume] Loaded state_dict into base model (missing={len(missing)} unexpected={len(unexpected)})." + Style.RESET_ALL)
+    else:
+        model = base_model
+
+    model = model.float()
+    _assert_vit_visual_or_abort(model, cfg)
+
+    model_dtype = _get_model_dtype(model)
+    image_dtype = _get_image_dtype(model)
+    print(f"Precision (param dtype): {model_dtype}")
+    print(f"Image dtype (conv1):     {image_dtype}")
+
+    # ------------------------
     # Logs init
     # ------------------------
     
@@ -533,7 +578,7 @@ def main(cfg: TrainConfig):
     teacher_cache_paths: Dict[int, str] = {}
 
     if cfg.use_regression_teachers:
-        teacher_specs = resolve_regression_teacher_specs(cfg)
+        teacher_specs = resolve_regression_teacher_specs(cfg, model)
         teacher_cache_paths = make_teacher_cache_paths(cfg, teacher_specs)
 
         _init_log_file(
@@ -584,51 +629,6 @@ def main(cfg: TrainConfig):
             header="epoch\tglobal_batch_step\tbatch_idx\tadv_loss\tadv_lambda\tsim_pos0\tsim_pos1\tsim_neg\n",
             continue_run=continue_run
         )
-
-    # ------------------------
-    # Seeds
-    # ------------------------
-    dl_generator = torch.Generator()
-    dl_generator.manual_seed(int(cfg.teacher_seed))
-
-    torch.manual_seed(cfg.teacher_seed)
-    random.seed(cfg.teacher_seed)
-    try:
-        import numpy as np
-        np.random.seed(cfg.teacher_seed)
-    except Exception:
-        pass
-
-    # ------------------------------------------------
-    # CLIP module (KO-GmP or GmP), load CLIP model
-    # ------------------------------------------------
-    clip = import_clip_module(cfg.use_ko_config)
-    print(Fore.CYAN + f"[CLIP] module={'gmpclipheaddropout' if cfg.use_ko_config else 'gmpclipregression'}" + Style.RESET_ALL)
-
-    base_model, preprocess, _ = load_openai_clip_anything(clip, cfg.clipmodel, device=device, jit=False, strict=True)
-
-    if continue_run and loaded_bundle is not None:
-        model_from_pickle = try_load_model_from_resume(loaded_bundle, device=device)
-        if model_from_pickle is not None:
-            model = model_from_pickle
-            print(Fore.CYAN + "[Resume] Loaded full model pickle." + Style.RESET_ALL)
-        else:
-            model = base_model
-            sd_cpu = loaded_bundle.get("model_state_dict_cpu", None)
-            if sd_cpu is None:
-                raise SystemExit("[Abort] Resume bundle has neither loadable full model nor model_state_dict_cpu.")
-            missing, unexpected = model.load_state_dict(sd_cpu, strict=False)
-            print(Fore.CYAN + f"[Resume] Loaded state_dict into base model (missing={len(missing)} unexpected={len(unexpected)})." + Style.RESET_ALL)
-    else:
-        model = base_model
-
-    model = model.float()
-    _assert_vit_visual_or_abort(model, cfg)
-
-    model_dtype = _get_model_dtype(model)
-    image_dtype = _get_image_dtype(model)
-    print(f"Precision (param dtype): {model_dtype}")
-    print(f"Image dtype (conv1):     {image_dtype}")
 
     # ------------------------
     # Adversarial augs (GPU)
