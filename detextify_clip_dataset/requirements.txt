@@ -1,0 +1,3 @@
+transformers
+paddleocr
+pyreadline3

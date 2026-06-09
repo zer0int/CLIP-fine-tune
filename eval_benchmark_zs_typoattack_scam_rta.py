@@ -4,15 +4,35 @@ ______________________________________________________________
 
 Typographic Attack Benchmarks
 ------------------------------------------------------------
-Unified benchmark script for:
-  - BLISS-e-V/SCAM (HF dataset): variants {NoSCAM, SCAM, SynthSCAM}
-  - RTA-100 (local folder): filenames encode correct vs distractor labels
+Unified zero-shot binary-choice benchmark script for:
+
+  - BLISS-e-V/SCAM (HF dataset):
+      variants {NoSCAM, SCAM, SynthSCAM}
+
+  - zer0int/RTA-100-Triplet (HF dataset):
+      variants {NoRTA, RTA, SynthRTA}
+
+Both datasets use the same SCAM-style task:
+
+  image + two prompts:
+    "a photo of a {object_label}"
+    "a photo of a {attack_word}"
+
+The prediction is correct if the object-label prompt has higher cosine
+similarity than the typographic attack-word prompt.
 
 # ------------------------------------------------------------------
-# RTA-100:
-# 1000 photos with post-it notes stuck to objects.
-# Download:
-# https://github.com/azuma164/Defense-Prefix/blob/main/rta100.zip
+# RTA-100-Triplet:
+# Conveniently loaded from HuggingFace (will be auto-downloaded):
+# https://huggingface.co/datasets/zer0int/RTA-100-Triplet
+#
+# Dataset rows:
+#   image, type, object_label, attack_word, text_area, id
+#
+# Expected type values:
+#   NoRTA    - handwritten attack text removed
+#   RTA      - original real handwritten attack
+#   SynthRTA - same attack word rendered digitally
 # ------------------------------------------------------------------
 # ------------------------------------------------------------------
 # BLISS-e-V/SCAM:
@@ -27,6 +47,7 @@ Features:
   - Pre-tokenize all unique labels ONCE per model (cache encoded text features)
   - Dataset option: --dataset scam | rta | both
   - Saves per-model CSVs + summary CSV
+  - Saves simple per-dataset accuracy bar plots
 ------------------------------------------------------------
 """
 from __future__ import annotations
@@ -72,11 +93,11 @@ MODELS: List[Tuple[str, str]] = [
 ]
 
 
-# RTA-100 local path
-DEFAULT_RTA_DIR = "path/to/rta100"
+# RTA-100-Triplet and SCAM are both loaded from HuggingFace:
+DEFAULT_RTA_REPO = "zer0int/RTA-100-Triplet"
 
-# RTA-100 (must be available locally) / SCAM (auto-loaded from HF):
-dataset = "both" # ["scam", "rta", "both"] <- use "scam", will be pulled from HF hub
+# Dataset selection:
+dataset = "both"  # ["scam", "rta", "both"]
 
 # Output base dir
 OUT_BASE = "out_eval_benchmarks/zeroshot_typo_attack"
@@ -320,38 +341,47 @@ def load_scam_samples() -> Dict[str, List[PairSample]]:
     return buckets
 
 
-def load_rta_samples(rta_dir: str) -> List[PairSample]:
+def load_rta_samples() -> Dict[str, List[PairSample]]:
     """
-    Parses filenames like: label=<CORRECT>_text=<DISTRACTOR>.jpg|png|...
+    Load zer0int/RTA-100-Triplet from HuggingFace.
+
+    Returns dict: variant -> list[PairSample]
+    variants: NoRTA, RTA, SynthRTA
+
+    Expected HF columns:
+      image, type, object_label, attack_word, text_area, id
     """
-    pattern = re.compile(r"label=(.+?)_text=(.+?)\.(jpg|jpeg|png)$", re.IGNORECASE)
-    samples: List[PairSample] = []
+    ds = load_dataset(DEFAULT_RTA_REPO, split="train")
 
-    if not os.path.isdir(rta_dir):
-        raise FileNotFoundError(f"RTA dir not found: {rta_dir}")
+    buckets: Dict[str, List[PairSample]] = {v: [] for v in ["NoRTA", "RTA", "SynthRTA"]}
 
-    for fname in os.listdir(rta_dir):
-        m = pattern.match(fname)
-        if not m:
+    for entry in ds:
+        variant = str(entry["type"])
+        if variant not in buckets:
             continue
-        correct_label = m.group(1)
-        distractor_label = m.group(2)
-        path = os.path.join(rta_dir, fname)
 
-        img = Image.open(path).convert("RGB")
-        samples.append(
+        img = entry["image"]  # PIL from datasets
+        obj = str(entry["object_label"])
+        atk = str(entry["attack_word"])
+        sid = str(entry["id"])
+
+        buckets[variant].append(
             PairSample(
                 image=img,
-                correct_label=str(correct_label),
-                distractor_label=str(distractor_label),
+                correct_label=obj,
+                distractor_label=atk,
                 meta=dict(
-                    filename=fname,
-                    dataset="RTA100",
-                    variant="RTA100",
+                    id=sid,
+                    type=variant,
+                    text_area=str(entry.get("text_area", "")),
+                    dataset="RTA-100-Triplet",
+                    variant=variant,
                 ),
             )
         )
-    return samples
+
+    return buckets
+
 
 # TEXT FEATURE CACHE (per model)
 def _prompt(label: str) -> str:
@@ -617,16 +647,16 @@ def main():
     pin_memory = (device == "cuda")
     persistent_workers = True
 
-    print("\n===================================================")
-    print("Typographic Attack: BLISS-e-V/SCAM & RTA-100 (ZS)")
-    print("===================================================\n")
+    print("\n==================================================================")
+    print("Typographic Attack: BLISS-e-V/SCAM & zer0int/RTA-100-Triplet (ZS)")
+    print("==================================================================\n")
 
     print(f"\n[Device] {device}")
     print(f"[Config] dataset={dataset}  batch={BATCH_SIZE}  workers={NUM_WORKERS}  pin={pin_memory}")
 
     # Load datasets -> build sample lists
     scam_buckets: Dict[str, List[PairSample]] = {}
-    rta_samples: List[PairSample] = []
+    rta_buckets: Dict[str, List[PairSample]] = {}
 
     if dataset in ("scam", "both"):
         print("[Data] loading SCAM from HuggingFace: BLISS-e-V/SCAM")
@@ -635,9 +665,10 @@ def main():
             print(f"  [SCAM] {v:9s}: {len(lst)} samples")
 
     if dataset in ("rta", "both"):
-        print(f"[Data] loading RTA-100 from: {DEFAULT_RTA_DIR}")
-        rta_samples = load_rta_samples(DEFAULT_RTA_DIR)
-        print(f"  [RTA100] {len(rta_samples)} samples")
+        print(f"[Data] loading RTA-100-Triplet from HuggingFace: {DEFAULT_RTA_REPO}")
+        rta_buckets = load_rta_samples()
+        for v, lst in rta_buckets.items():
+            print(f"  [RTA]  {v:9s}: {len(lst)} samples")
 
     # Global label set across selected datasets (for per-model text cache)
     global_labels = set()
@@ -645,9 +676,10 @@ def main():
         for s in lst:
             global_labels.add(s.correct_label)
             global_labels.add(s.distractor_label)
-    for s in rta_samples:
-        global_labels.add(s.correct_label)
-        global_labels.add(s.distractor_label)
+    for v, lst in rta_buckets.items():
+        for s in lst:
+            global_labels.add(s.correct_label)
+            global_labels.add(s.distractor_label)
     global_labels = sorted(list(global_labels))
     print(f"[Labels] unique labels across selected datasets: {len(global_labels):,}")
 
@@ -675,16 +707,19 @@ def main():
                 persistent_workers=persistent_workers,
             )
 
-    if dataset in ("rta", "both") and len(rta_samples) > 0:
-        ds_rta = PairDataset(rta_samples, preprocess_fn=preprocess_fn)
-        loaders["RTA100"] = _make_loader(
-            ds_rta,
-            batch_size=BATCH_SIZE,
-            num_workers=NUM_WORKERS,
-            prefetch_factor=PREFETCH_FACTOR,
-            pin_memory=pin_memory,
-            persistent_workers=persistent_workers,
-        )
+    if dataset in ("rta", "both"):
+        for variant, samples in rta_buckets.items():
+            if len(samples) == 0:
+                continue
+            ds_variant = PairDataset(samples, preprocess_fn=preprocess_fn)
+            loaders[f"RTA::{variant}"] = _make_loader(
+                ds_variant,
+                batch_size=BATCH_SIZE,
+                num_workers=NUM_WORKERS,
+                prefetch_factor=PREFETCH_FACTOR,
+                pin_memory=pin_memory,
+                persistent_workers=persistent_workers,
+            )
 
     if len(loaders) == 0:
         raise SystemExit("No datasets to evaluate (empty loaders). Check --dataset and paths.")
@@ -806,10 +841,6 @@ def main():
     df_sorted = df_all.sort_values("accuracy", ascending=False)
     for _, r in df_sorted.iterrows():
         print(f"{str(r['model_alias']):>12s}  {str(r['dataset']):<18s}  acc={float(r['accuracy']):.4f}  n={int(r['n_total']):4d}")
-
-    out_summary_csv = os.path.join(out_dir, "summary_all_models.csv")
-    df_all.to_csv(out_summary_csv, index=False)
-    print(f"\n[Save] {out_summary_csv}")
 
     out_summary_csv = os.path.join(out_dir, "summary_all_models.csv")
     df_all.to_csv(out_summary_csv, index=False)

@@ -16,6 +16,10 @@ The config .json are in `utils_xconfigs_examples` --- Training code: `all_in_one
 - Brut: [CLIP-Regression-BRUT-ViT-L-14](https://huggingface.co/zer0int/CLIP-Regression-BRUT-ViT-L-14) 🤗
 - All my CLIP models: [huggingface.co/zer0int](https://huggingface.co/zer0int) 🤗
 ------
+### New 09-June-2026:
+- [De-textify datasets for CLIP](detextify_clip_dataset) to prevent typographic attack shortcut reinforcement
+- New [RTA-100 triplet typographic attack dataset](https://huggingface.co/datasets/zer0int/RTA-100-Triplet) added to eval
+------
 
 ### What's New in CLIP-fine-tune? 🎉
 - All-in-one complete fine-tuning suite
